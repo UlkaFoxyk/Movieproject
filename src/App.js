@@ -1,8 +1,8 @@
 import './App.css';
 import Movie from './components/Movie'
 import {useState, useEffect} from 'react'
-// import NotFound from './components/NotFound';
-// import {Spinner} from 'react-bootstrap';
+import NotFound from './components/NotFound';
+import {Spinner} from 'react-bootstrap';
 
 const movieApi = 'https://imdb-api.com/en/API/Search/k_7ondv4b8/'
 const movieTop = 'https://imdb-api.com/en/API/Top250Movies/k_7ondv4b8'
@@ -11,7 +11,7 @@ function App() {
   const [movie,setMovie] = useState([])
   const [term, setTerm] = useState('')
   const [loading, setLoading] = useState(true)
-  // const [error, setError] = useState(false)
+  const [error, setError] = useState(false)
 
   const onHandleTerm = (e) => {
     setTerm(e.target.value)
@@ -28,25 +28,33 @@ function App() {
 
  const onHandleSearch = (e) => {
     e.preventDefault()
+    setLoading(true)
     fetch(movieApi + term)
     .then(res => res.json())
-    .then(res => setMovie(res.results))
+    .then(res => {
+      if(res.results.length !== 0) {
+        setMovie(res.results)
+      } else {
+        setError(true)
+      }
+      setLoading(false)
+    })
     setTerm('')
 
 
   }
 
 
-//  const onNotFound = () => {
-//     setLoading(true)
-//     fetch(movieTop)
-//     .then(res => res.json())
-//     .then(res => {
-//       setMovie(res.items)
-//       setError(false)
-//       setLoading(false)
-//     })
-//  }
+ const onNotFound = () => {
+    setLoading(true)
+    fetch(movieTop)
+    .then(res => res.json())
+    .then(res => {
+      setMovie(res.items)
+      setError(false)
+      setLoading(false)
+    })
+ }
  
   return (
     <>
@@ -56,7 +64,17 @@ function App() {
           </form>
         </header>
         <div className="movies">
-            {movie.map((elem) => <Movie key={elem.id} {...elem}/>)}
+            {
+            error ? <NotFound onNotFound={onNotFound}/> :
+            (loading ? 
+            <Spinner animation="border" variant="light" 
+            style={{width: '5rem', 
+            height: '5rem', 
+            position: 'absolute', 
+            top: '50%', 
+            left: '50%'}}/> : 
+            movie.map((elem) => <Movie key={elem.id} {...elem}/>))
+            }
         </div>
     </>
   );
