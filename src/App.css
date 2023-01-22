@@ -7,7 +7,7 @@ header{
 }
 
 header > input{
-  background-color: rgb(39, 37, 87);
+  background-color: rgb(46, 44, 105);
   color: white;
   padding: .5em 1em;
   border-radius: 5px;
@@ -26,7 +26,7 @@ header > input{
 .movie_block{
   width: 300px;
   color: white;
-  background-color: rgb(39, 37, 87);
+  background-color: rgb(57, 55, 133);
   display: flex;
   flex-direction: column;
   padding: 1em;
